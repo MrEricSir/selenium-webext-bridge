@@ -1,0 +1,35 @@
+{
+  "name": "selenium-webext-bridge",
+  "version": "1.0.0",
+  "description": "Selenium/Firefox WebExtension test bridge - control and query any Firefox extension from Selenium tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/bridge-api.test.js"
+  },
+  "keywords": [
+    "selenium",
+    "firefox",
+    "webextension",
+    "testing",
+    "browser-extension",
+    "integration-testing",
+    "webdriver"
+  ],
+  "author": "Eric Muyser",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicedoc/selenium-webext-bridge.git"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "extension/",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "selenium-webdriver": "^4.0.0",
+    "geckodriver": "*"
+  }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Selenium WebExt Bridge</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        h1 {
+            color: #4ec9b0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background: #2d2d2d;
+        }
+        .ready {
+            border-left: 4px solid #4ec9b0;
+        }
+        .error {
+            border-left: 4px solid #f48771;
+        }
+        pre {
+            background: #252525;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selenium WebExt Bridge</h1>
+    <div id="status" class="status">
+        <strong>Status:</strong> <span id="status-text">Initializing...</span>
+    </div>
+
+    <h2>Usage from Selenium:</h2>
+    <pre><code>// Navigate to this page
+await driver.get('moz-extension://&lt;uuid&gt;/test-api.html');
+
+// Call API methods
+const tabs = await driver.executeScript(() => {
+    return window.TestBridge.getTabs();
+});
+
+// Forward messages to your extension
+const state = await driver.executeScript(() => {
+    return window.TestBridge.forwardToExtension('your-ext@id', { action: 'getState' });
+});</code></pre>
+
+    <h2>Available Methods:</h2>
+    <div id="methods"></div>
+
+    <script src="test-api.js"></script>
+</body>
+</html>

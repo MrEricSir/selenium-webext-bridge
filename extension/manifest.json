@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "Selenium WebExt Bridge",
+  "version": "1.0.0",
+  "description": "Test bridge extension for automated testing of Firefox WebExtensions",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "selenium-webext-bridge@test.local"
+    }
+  },
+
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["direct-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "web_accessible_resources": [
+    "test-api.html",
+    "test-api.js"
+  ]
+}
