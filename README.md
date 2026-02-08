@@ -1,7 +1,7 @@
 # selenium-webext-bridge
 
-[![Tests](https://github.com/nicedoc/selenium-webext-bridge/actions/workflows/test.yml/badge.svg)](https://github.com/nicedoc/selenium-webext-bridge/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/nicedoc/selenium-webext-bridge/graph/badge.svg)](https://codecov.io/gh/nicedoc/selenium-webext-bridge)
+[![Tests](https://github.com/MrEricSir/selenium-webext-bridge/actions/workflows/test.yml/badge.svg)](https://github.com/MrEricSir/selenium-webext-bridge/actions/workflows/test.yml)
+[![Coverage](https://codecov.io/gh/MrEricSir/selenium-webext-bridge/graph/badge.svg)](https://codecov.io/gh/MrEricSir/selenium-webext-bridge)
 
 Build integration tests for your Firefox extensions with ease.
 

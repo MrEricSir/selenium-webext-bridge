@@ -20,7 +20,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nicedoc/selenium-webext-bridge.git"
+    "url": "git+https://github.com/MrEricSir/selenium-webext-bridge.git"
   },
   "files": [
     "index.js",
