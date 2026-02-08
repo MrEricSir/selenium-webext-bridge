@@ -105,6 +105,8 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `init()` | Navigates to a page and waits for the bridge content script to inject |
 | `ping()` | Verifies the bridge is working (returns `"pong"`) |
 | `captureScreenshot(format?)` | Screenshots the active tab (returns `data:image/png;...`) |
+| **Extension Forwarding** | |
+| `sendToExtension(extensionId, payload)` | Forwards a message to any installed extension |
 | **Tab Queries** | |
 | `getTabs()` | Gets all browser tabs |
 | `getTabById(tabId)` | Gets a single tab's full state |
@@ -141,8 +143,6 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `waitForWindowCount(n, timeout?)` | Waits until the browser has exactly `n` windows |
 | **Wait Helpers** | |
 | `waitFor(conditionFn, timeout?)` | Generic condition poller — waits for a function to return `true` |
-| **Extension Forwarding** | |
-| `sendToExtension(extensionId, payload)` | Forwards a message to any installed extension |
 
 ### Helpers
 
