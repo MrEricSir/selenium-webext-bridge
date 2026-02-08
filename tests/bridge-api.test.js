@@ -34,6 +34,10 @@ async function main() {
     // --- Setup ---
     console.log('Setting up Firefox...');
     const options = new firefox.Options();
+    if (process.env.HEADLESS) {
+      console.log('Running in headless mode');
+      options.addArguments('-headless');
+    }
     driver = await new Builder()
       .forBrowser('firefox')
       .setFirefoxOptions(options)
