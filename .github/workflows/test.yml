@@ -16,4 +16,8 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm install selenium-webdriver geckodriver
-      - run: HEADLESS=1 npm test
+      - run: HEADLESS=1 npm run test:coverage
+      - uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info

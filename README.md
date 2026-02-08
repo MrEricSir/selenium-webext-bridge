@@ -1,5 +1,8 @@
 # selenium-webext-bridge
 
+[![Tests](https://github.com/nicedoc/selenium-webext-bridge/actions/workflows/test.yml/badge.svg)](https://github.com/nicedoc/selenium-webext-bridge/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/nicedoc/selenium-webext-bridge/graph/badge.svg)](https://codecov.io/gh/nicedoc/selenium-webext-bridge)
+
 Build integration tests for your Firefox extensions with ease.
 
 This test bridge runs alongside your Firefox extension, allowing Selenium tests written with Node to interact with browser tabs, windows, and communicate with your extension. All with a straightforward API.

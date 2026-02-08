@@ -4,7 +4,8 @@
   "description": "Selenium/Firefox WebExtension test bridge - control and query any Firefox extension from Selenium tests",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/bridge-api.test.js"
+    "test": "node tests/bridge-api.test.js",
+    "test:coverage": "c8 --reporter=text --reporter=lcov --include='lib/**' --include='index.js' node tests/bridge-api.test.js"
   },
   "keywords": [
     "selenium",
@@ -29,7 +30,10 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "selenium-webdriver": "^4.0.0",
-    "geckodriver": "*"
+    "geckodriver": "*",
+    "selenium-webdriver": "^4.0.0"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3"
   }
 }
