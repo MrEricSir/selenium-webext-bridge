@@ -99,55 +99,78 @@ It's up to you what to implement in your listener. Some possibilities include re
 
 ### TestBridge
 
+#### Core
 | Method | Description |
-|--------|-------------|
+|:-------|:------------|
 | `new TestBridge(driver)` | Creates a test bridge instance |
 | `init()` | Navigates to a page and waits for the bridge content script to inject |
 | `ping()` | Verifies the bridge is working (returns `"pong"`) |
 | `captureScreenshot(format?)` | Screenshots the active tab (returns `data:image/png;...`) |
-| **Extension Forwarding** | |
+
+#### Extension Forwarding
+| Method | Description |
+|:-------|:------------|
 | `sendToExtension(extensionId, payload)` | Forwards a message to any installed extension |
-| **Tab Queries** | |
+
+#### Tab Queries
+| Method | Description |
+|:-------|:------------|
 | `getTabs()` | Gets all browser tabs |
 | `getTabById(tabId)` | Gets a single tab's full state |
 | `getActiveTab()` | Gets the currently active tab in the current window |
 | `getTabGroups()` | Gets all tab groups (empty array if not supported) |
-| **Tab Lifecycle** | |
+
+#### Tab Lifecycle
+| Method | Description |
+|:-------|:------------|
 | `createTab(url, active?)` | Opens a new tab (without switching Selenium focus) |
 | `closeTab(tabId)` | Closes a tab by ID |
 | `updateTab(tabId, { url?, active?, muted?, pinned? })` | Updates properties of a tab |
 | `reloadTab(tabId)` | Reloads a tab |
-| **Tab State** | |
+
+#### Tab State
+| Method | Description |
+|:-------|:------------|
 | `moveTab(tabId, index)` | Moves a tab to a new position |
 | `pinTab(tabId)` / `unpinTab(tabId)` | Pins or unpins a tab |
 | `muteTab(tabId)` / `unmuteTab(tabId)` | Mutes or unmutes a tab |
 | `groupTabs(tabIds, title, color?, groupId?)` | Groups tabs into a new or existing tab group |
 | `ungroupTabs(tabIds)` | Ungroups tabs |
-| **Tab Execution** | |
+
+#### Tab Execution and Events
+| Method | Description |
+|:-------|:------------|
 | `executeInTab(tabId, code)` | Runs JavaScript in a specific tab and returns the result |
-| **Tab Events** | |
 | `getTabEvents(clear?)` | Gets buffered tab created/updated/removed events (last 100). Pass `true` to clear. |
-| **Tab Waiters** | |
+
+#### Tab Waiters
+| Method | Description |
+|:-------|:------------|
 | `waitForTabCount(n, timeout?)` | Waits until the browser has exactly `n` tabs |
 | `waitForUrl(pattern, timeout?)` | Waits for any tab URL to contain `pattern` (returns the tab, or `null` on timeout) |
 | `waitForTabEvent(eventType, timeout?)` | Waits for a specific tab event type (e.g. `'created'`, `'removed'`). Returns the event, or `null` on timeout. |
-| **Window Management** | |
+
+
+#### Window Management
+| Method | Description |
+|:-------|:------------|
 | `getWindows()` | Lists all windows with their tabs |
 | `createWindow(url?, options?)` | Opens a new browser window. Options: `{ type, state, width, height, left, top }` |
 | `closeWindow(windowId)` | Closes a window |
 | `getWindowById(windowId)` | Gets a single window's state with its tabs |
 | `updateWindow(windowId, props)` | Updates window properties (`{ state, width, height, left, top, focused }`) |
-| **Window Events** | |
+
+#### Window Misc.
+| Method | Description |
+|:-------|:------------|
 | `getWindowEvents(clear?)` | Gets buffered window created/removed events (last 100). Pass `true` to clear. |
-| **Window Waiters** | |
 | `waitForWindowCount(n, timeout?)` | Waits until the browser has exactly `n` windows |
-| **Wait Helpers** | |
 | `waitFor(conditionFn, timeout?)` | Generic condition poller — waits for a function to return `true` |
 
 ### Helpers
 
 | Export | Description |
-|--------|-------------|
+|:-------|:------------|
 | `extensionDir` | Path to the bridge extension directory. Pass this to `driver.installAddon()` |
 | `sleep(ms)` | Promise-based delay |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
