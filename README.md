@@ -172,7 +172,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 |:-------|:------------|
 | `extensionDir` | Path to the bridge extension directory. Pass this to `driver.installAddon()` |
 | `sleep(ms)` | Promise-based delay |
-| `waitForCondition(conditionFn, timeout?, interval?)` | Node.js-side condition poller — calls `conditionFn` until it returns a truthy value |
+| `waitForCondition(conditionFn, timeout?, interval?)` | Calls `conditionFn` until it returns a truthy value |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
 | `createTestServer({ port?, host? })` | Starts the local test bridge server |
 | `TabUtils` | Helper class for opening/closing/switching tabs via Selenium |
