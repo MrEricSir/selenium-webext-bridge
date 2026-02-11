@@ -15,7 +15,7 @@ const path = require('path');
 const { Builder } = require('selenium-webdriver');
 const firefox = require('selenium-webdriver/firefox');
 const {
-  TestBridge, extensionDir, sleep, createTestServer, TestResults, generateTestUrl
+  TestBridge, extensionDir, sleep, waitForCondition, createTestServer, TestResults, generateTestUrl
 } = require('../');
 
 const HELLO_EXT_DIR = path.join(__dirname, '..', 'examples', 'hello-world', 'extension');
@@ -505,6 +505,89 @@ async function main() {
         results.fail('getWindowEvents(clear=true) clears the buffer', 'no events to clear');
       }
     } catch (e) { results.error('getWindowEvents(clear=true) clears the buffer', e); }
+
+    // =============================================================
+    // WAIT HELPERS: waitForCondition (bridge method + standalone)
+    // =============================================================
+    console.log('\n--- Wait Helpers ---');
+
+    // waitForCondition — condition becomes true
+    try {
+      let counter = 0;
+      const result = await waitForCondition(async () => {
+        counter++;
+        return counter >= 3 ? 'done' : false;
+      }, 5000, 100);
+      if (result === 'done' && counter >= 3)
+        results.pass('waitForCondition() resolves when condition is truthy');
+      else
+        results.fail('waitForCondition() resolves when condition is truthy', `result: ${result}, counter: ${counter}`);
+    } catch (e) { results.error('waitForCondition() resolves when condition is truthy', e); }
+
+    // waitForCondition — timeout returns null
+    try {
+      const result = await waitForCondition(async () => false, 500, 100);
+      if (result === null)
+        results.pass('waitForCondition() returns null on timeout');
+      else
+        results.fail('waitForCondition() returns null on timeout', `got: ${result}`);
+    } catch (e) { results.error('waitForCondition() returns null on timeout', e); }
+
+    // waitForCondition — swallows errors and keeps polling
+    try {
+      let callCount = 0;
+      const result = await waitForCondition(async () => {
+        callCount++;
+        if (callCount < 3) throw new Error('not yet');
+        return 'recovered';
+      }, 5000, 100);
+      if (result === 'recovered')
+        results.pass('waitForCondition() recovers from errors in conditionFn');
+      else
+        results.fail('waitForCondition() recovers from errors in conditionFn', `got: ${result}`);
+    } catch (e) { results.error('waitForCondition() recovers from errors in conditionFn', e); }
+
+    // waitForCondition — works with bridge methods
+    try {
+      const tab = await bridge.createTab('http://127.0.0.1:8080/wait-condition-test');
+      await sleep(500);
+      const result = await waitForCondition(async () => {
+        const tabs = await bridge.getTabs();
+        return tabs.find(t => t.url && t.url.includes('wait-condition-test'));
+      }, 10000, 500);
+      if (result && result.url && result.url.includes('wait-condition-test'))
+        results.pass('waitForCondition() works with bridge methods');
+      else
+        results.fail('waitForCondition() works with bridge methods', `got: ${JSON.stringify(result)}`);
+      await bridge.closeTab(tab.id);
+      await sleep(300);
+    } catch (e) { results.error('waitForCondition() works with bridge methods', e); }
+
+    // waitForCondition — custom interval
+    try {
+      let calls = 0;
+      const start = Date.now();
+      const result = await waitForCondition(async () => {
+        calls++;
+        return calls >= 3 ? true : false;
+      }, 5000, 50);
+      const elapsed = Date.now() - start;
+      if (result === true && elapsed < 500)
+        results.pass('waitForCondition() respects custom interval');
+      else
+        results.fail('waitForCondition() respects custom interval', `elapsed: ${elapsed}ms, calls: ${calls}`);
+    } catch (e) { results.error('waitForCondition() respects custom interval', e); }
+
+    // waitForCondition — returns first truthy value (not just true)
+    try {
+      const result = await waitForCondition(async () => {
+        return { found: true, data: 42 };
+      }, 5000, 100);
+      if (result && result.found === true && result.data === 42)
+        results.pass('waitForCondition() returns the truthy value, not just true');
+      else
+        results.fail('waitForCondition() returns the truthy value, not just true', `got: ${JSON.stringify(result)}`);
+    } catch (e) { results.error('waitForCondition() returns the truthy value, not just true', e); }
 
     // =============================================================
     // EXTENSION FORWARDING (using hello-world extension)
