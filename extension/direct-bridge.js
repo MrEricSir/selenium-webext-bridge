@@ -104,7 +104,7 @@ script.textContent = `
     async waitForTabUrl(pattern, timeout) {
       return await sendRequest('waitForTabUrl', { pattern, timeout });
     },
-    async waitFor(conditionFn, timeout) {
+    async waitForCondition(conditionFn, timeout) {
       timeout = timeout || 5000;
       const start = Date.now();
       while (Date.now() - start < timeout) {
