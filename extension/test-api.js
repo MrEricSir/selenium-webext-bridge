@@ -70,8 +70,8 @@ window.TestBridge = {
   },
 
   // --- Tab Waiting ---
-  async waitForUrl(pattern, timeout) {
-    return await bgCall({ action: 'waitForUrl', pattern, timeout });
+  async waitForTabUrl(pattern, timeout) {
+    return await bgCall({ action: 'waitForTabUrl', pattern, timeout });
   },
   async waitFor(conditionFn, timeout = 5000) {
     const start = Date.now();

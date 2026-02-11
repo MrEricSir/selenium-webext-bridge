@@ -33,7 +33,7 @@ script.textContent = `
       const id = ++requestId;
       pendingRequests.set(id, { resolve, reject });
       window.postMessage({ type: 'bridge-request', id, action, data }, '*');
-      // Timeout after 15 seconds (some ops like waitForUrl can take a while)
+      // Timeout after 15 seconds (some ops like waitForTabUrl can take a while)
       setTimeout(() => {
         if (pendingRequests.has(id)) {
           pendingRequests.delete(id);
@@ -101,8 +101,8 @@ script.textContent = `
     },
 
     // --- Tab Waiting ---
-    async waitForUrl(pattern, timeout) {
-      return await sendRequest('waitForUrl', { pattern, timeout });
+    async waitForTabUrl(pattern, timeout) {
+      return await sendRequest('waitForTabUrl', { pattern, timeout });
     },
     async waitFor(conditionFn, timeout) {
       timeout = timeout || 5000;
@@ -169,7 +169,7 @@ const BG_ACTIONS = new Set([
   'muteTab', 'unmuteTab', 'reloadTab', 'getActiveTab',
   'groupTabs', 'ungroupTabs', 'forwardToExtension',
   'createTab', 'closeTab', 'getTabById', 'updateTab',
-  'waitForUrl', 'executeInTab', 'captureScreenshot',
+  'waitForTabUrl', 'executeInTab', 'captureScreenshot',
   'createWindow', 'closeWindow', 'getWindows', 'getWindowById',
   'updateWindow', 'getTabEvents', 'getWindowEvents'
 ]);

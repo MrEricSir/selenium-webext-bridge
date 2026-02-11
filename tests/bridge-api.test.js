@@ -233,33 +233,33 @@ async function main() {
     } catch (e) { results.error('getTabGroups() returns an array', e); }
 
     // =============================================================
-    // TAB WAITING: waitForTabCount, waitForUrl, waitForTabEvent
+    // TAB WAITING: waitForTabCount, waitForTabUrl, waitForTabEvent
     // =============================================================
     console.log('\n--- Tab Waiting ---');
 
-    // waitForUrl — create a tab then wait for its URL
+    // waitForTabUrl — create a tab then wait for its URL
     try {
       const marker = `wait-url-${Date.now()}`;
-      // Create the tab async — waitForUrl should find it
+      // Create the tab async — waitForTabUrl should find it
       bridge.createTab(`http://127.0.0.1:8080/${marker}`);
       await sleep(200); // small delay so createTab fires
-      const found = await bridge.waitForUrl(marker, 10000);
+      const found = await bridge.waitForTabUrl(marker, 10000);
       if (found && found.url && found.url.includes(marker))
-        results.pass('waitForUrl() finds tab matching pattern');
+        results.pass('waitForTabUrl() finds tab matching pattern');
       else
-        results.fail('waitForUrl() finds tab matching pattern', `got: ${JSON.stringify(found)}`);
+        results.fail('waitForTabUrl() finds tab matching pattern', `got: ${JSON.stringify(found)}`);
       // Clean up
       if (found) { try { await bridge.closeTab(found.id); await sleep(300); } catch(e) {} }
-    } catch (e) { results.error('waitForUrl() finds tab matching pattern', e); }
+    } catch (e) { results.error('waitForTabUrl() finds tab matching pattern', e); }
 
-    // waitForUrl — timeout returns null
+    // waitForTabUrl — timeout returns null
     try {
-      const found = await bridge.waitForUrl('this-url-does-not-exist-xyz', 1000);
+      const found = await bridge.waitForTabUrl('this-url-does-not-exist-xyz', 1000);
       if (found === null)
-        results.pass('waitForUrl() returns null on timeout');
+        results.pass('waitForTabUrl() returns null on timeout');
       else
-        results.fail('waitForUrl() returns null on timeout', `got: ${JSON.stringify(found)}`);
-    } catch (e) { results.error('waitForUrl() returns null on timeout', e); }
+        results.fail('waitForTabUrl() returns null on timeout', `got: ${JSON.stringify(found)}`);
+    } catch (e) { results.error('waitForTabUrl() returns null on timeout', e); }
 
     // waitForTabEvent — create a tab and wait for the 'created' event
     try {

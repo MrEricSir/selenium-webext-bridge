@@ -200,7 +200,7 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
 
       // --- New: Tab Waiting ---
 
-      case 'waitForUrl': {
+      case 'waitForTabUrl': {
         const pattern = message.pattern;
         const timeout = message.timeout || 10000;
         const startTime = Date.now();

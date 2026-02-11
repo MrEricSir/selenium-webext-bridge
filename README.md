@@ -147,7 +147,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | Method | Description |
 |:-------|:------------|
 | `waitForTabCount(n, timeout?)` | Waits until the browser has exactly `n` tabs |
-| `waitForUrl(pattern, timeout?)` | Waits for any tab URL to contain `pattern` (returns the tab, or `null` on timeout) |
+| `waitForTabUrl(pattern, timeout?)` | Waits for any tab URL to contain `pattern` (returns the tab, or `null` on timeout) |
 | `waitForTabEvent(eventType, timeout?)` | Waits for a specific tab event type (e.g. `'created'`, `'removed'`). Returns the event, or `null` on timeout. |
 
 
@@ -165,7 +165,6 @@ It's up to you what to implement in your listener. Some possibilities include re
 |:-------|:------------|
 | `getWindowEvents(clear?)` | Gets buffered window created/removed events (last 100). Pass `true` to clear. |
 | `waitForWindowCount(n, timeout?)` | Waits until the browser has exactly `n` windows |
-| `waitFor(conditionFn, timeout?)` | Generic condition poller — waits for a function to return `true` |
 
 ### Helpers
 
@@ -173,6 +172,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 |:-------|:------------|
 | `extensionDir` | Path to the bridge extension directory. Pass this to `driver.installAddon()` |
 | `sleep(ms)` | Promise-based delay |
+| `waitForCondition(conditionFn, timeout?, interval?)` | Node.js-side condition poller — calls `conditionFn` until it returns a truthy value |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
 | `createTestServer({ port?, host? })` | Starts the local test bridge server |
 | `TabUtils` | Helper class for opening/closing/switching tabs via Selenium |
