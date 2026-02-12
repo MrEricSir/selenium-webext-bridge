@@ -11,9 +11,7 @@
  */
 
 const path = require('path');
-const { Builder } = require('selenium-webdriver');
-const firefox = require('selenium-webdriver/firefox');
-const { TestBridge, extensionDir, sleep, createTestServer } = require('../../');
+const { launchBrowser, cleanupBrowser, createTestServer } = require('../../');
 
 const HELLO_EXT_DIR = path.join(__dirname, 'extension');
 const HELLO_EXT_ID = 'hello-world@example.local';
@@ -23,33 +21,18 @@ async function main() {
 
   // 1. Start local HTTP server (bridge needs an http page to inject into)
   const server = await createTestServer({ port: 8080 });
-  let driver;
+  let browser;
 
   try {
-    // 2. Launch Firefox
+    // 2. Launch Firefox with the bridge and our extension installed
     console.log('Launching Firefox...');
-    const options = new firefox.Options();
-    driver = await new Builder()
-      .forBrowser('firefox')
-      .setFirefoxOptions(options)
-      .build();
-
-    // 3. Install the bridge extension
-    console.log('Installing bridge extension...');
-    await driver.installAddon(extensionDir, true);
-    await sleep(2000);
-
-    // 4. Create a TestBridge and initialize it
-    const bridge = new TestBridge(driver);
-    await bridge.init();
+    browser = await launchBrowser({
+      extensions: [HELLO_EXT_DIR]
+    });
+    const bridge = browser.testBridge;
     console.log('Bridge ready!\n');
 
-    // 5. Install our extension under test
-    console.log('Installing Hello World extension...');
-    await driver.installAddon(HELLO_EXT_DIR, true);
-    await sleep(2000);
-
-    // 6. Talk to the extension via the bridge
+    // 3. Talk to the extension via the bridge
     let result;
 
     // Ping
@@ -76,7 +59,7 @@ async function main() {
     console.log('\nAll checks passed!');
 
   } finally {
-    if (driver) await driver.quit();
+    await cleanupBrowser(browser);
     server.close();
   }
 }

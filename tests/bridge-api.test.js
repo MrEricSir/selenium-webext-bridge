@@ -12,10 +12,8 @@
  */
 
 const path = require('path');
-const { Builder } = require('selenium-webdriver');
-const firefox = require('selenium-webdriver/firefox');
 const {
-  TestBridge, extensionDir, sleep, waitForCondition, createTestServer, TestResults, generateTestUrl
+  sleep, waitForCondition, createTestServer, TestResults, generateTestUrl, launchBrowser, cleanupBrowser
 } = require('../');
 
 const HELLO_EXT_DIR = path.join(__dirname, '..', 'examples', 'hello-world', 'extension');
@@ -28,29 +26,16 @@ async function main() {
 
   const results = new TestResults();
   const server = await createTestServer({ port: 8080 });
-  let driver;
+  let browser;
 
   try {
     // --- Setup ---
     console.log('Setting up Firefox...');
-    const options = new firefox.Options();
-    if (process.env.HEADLESS) {
-      console.log('Running in headless mode');
-      options.addArguments('-headless');
-    }
-    driver = await new Builder()
-      .forBrowser('firefox')
-      .setFirefoxOptions(options)
-      .build();
-
-    await driver.installAddon(extensionDir, true);
-    await sleep(2000);
-
-    const bridge = new TestBridge(driver);
-    await bridge.init();
-
-    await driver.installAddon(HELLO_EXT_DIR, true);
-    await sleep(2000);
+    browser = await launchBrowser({
+      extensions: [HELLO_EXT_DIR],
+      waitForInit: 2000
+    });
+    const bridge = browser.testBridge;
 
     console.log('Setup complete.\n');
 
@@ -636,9 +621,7 @@ async function main() {
   } catch (e) {
     results.error('Test Suite', e);
   } finally {
-    if (driver) {
-      try { await driver.quit(); } catch (e) {}
-    }
+    await cleanupBrowser(browser);
     server.close();
   }
 

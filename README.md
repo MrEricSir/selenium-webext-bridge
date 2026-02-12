@@ -20,25 +20,16 @@ npm install selenium-webext-bridge
 ## Getting Started
 
 ```js
-const { Builder } = require('selenium-webdriver');
-const firefox = require('selenium-webdriver/firefox');
-const { TestBridge, extensionDir, sleep, createTestServer } = require('selenium-webext-bridge');
+const { launchBrowser, cleanupBrowser, createTestServer } = require('selenium-webext-bridge');
 
 // Start the test server to establish its communications channel.
 const server = await createTestServer({ port: 8080 });
 
-// Launch Firefox and install the bridge.
-const driver = await new Builder().forBrowser('firefox').build();
-await driver.installAddon(extensionDir, true);
-await sleep(2000);
-
-// Initialize the bridge. This will navigate to a page on the test server to establish communications.
-const bridge = new TestBridge(driver);
-await bridge.init();
-
-// Install your extension.
-await driver.installAddon('/path/to/your/extension', true);
-await sleep(2000); // Waits for Firefox to process the installation.
+// Launch Firefox with the bridge and your extension installed.
+const browser = await launchBrowser({
+  extensions: ['/path/to/your/extension']
+});
+const bridge = browser.testBridge;
 
 // Communicate with your extension.
 const response = await bridge.sendToExtension('your-ext@id', {
@@ -53,8 +44,41 @@ const title = await bridge.executeInTab(tab.id, 'document.title');
 const screenshot = await bridge.captureScreenshot();
 
 // Leave everything in a clean state. This would most likely live in a finally {} block.
-await driver.quit();
+await cleanupBrowser(browser);
 server.close();
+```
+
+### Going Deeper
+
+The `launchBrowser()` and `cleanupBrowser()` functions are provided for convenience.
+
+`launchBrowser()` creates a temporary Firefox profile, installs the bridge extension, initializes it, and then installs any local extensions you specify. Pass `headless: true` to run without a visible browser window (or set the `HEADLESS=1` environment variable.)
+
+`cleanupBrowser()` quits the browser and removes the temporary profile.
+
+If you need complete control over the browser configuration, you can set up Firefox manually instead. Note that you'll need to handle headless mode, profile management, and extension installs yourself if you go this route.
+
+```js
+const { Builder } = require('selenium-webdriver');
+const firefox = require('selenium-webdriver/firefox');
+const { TestBridge, extensionDir, sleep } = require('selenium-webext-bridge');
+
+const options = new firefox.Options();
+options.addArguments('-headless');
+
+const driver = await new Builder()
+  .forBrowser('firefox')
+  .setFirefoxOptions(options)
+  .build();
+
+await driver.installAddon(extensionDir, true);
+await sleep(2000);
+
+const bridge = new TestBridge(driver);
+await bridge.init();
+
+await driver.installAddon('/path/to/your/extension', true);
+await sleep(2000);
 ```
 
 ## Designing Your Extension For Testability
@@ -170,7 +194,9 @@ It's up to you what to implement in your listener. Some possibilities include re
 
 | Export | Description |
 |:-------|:------------|
-| `extensionDir` | Path to the bridge extension directory. Pass this to `driver.installAddon()` |
+| `launchBrowser(options?)` | Launches Firefox with the bridge extension installed. Options: `{ extensions, BridgeClass, headless, waitForInit }`. Returns `{ driver, testBridge, profilePath }` |
+| `cleanupBrowser(browser)` | Quits the browser and removes its temporary profile |
+| `extensionDir` | Path to the bridge extension directory (for manual setup with `driver.installAddon()`) |
 | `sleep(ms)` | Promise-based delay |
 | `waitForCondition(conditionFn, timeout?, interval?)` | Calls `conditionFn` until it returns a truthy value |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
@@ -198,6 +224,17 @@ class MyExtBridge extends TestBridge {
     return resp.data;
   }
 }
+```
+
+Then pass it to `launchBrowser()` so it creates your subclass instead of the default:
+
+```js
+const browser = await launchBrowser({
+  extensions: ['/path/to/your/extension'],
+  BridgeClass: MyExtBridge
+});
+const bridge = browser.testBridge; // instanceof MyExtBridge
+const state = await bridge.getState();
 ```
 
 ## Examples
