@@ -195,7 +195,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 
 | Export | Description |
 |:-------|:------------|
-| `launchBrowser(options?)` | Launches Firefox with the bridge extension installed. Options: `{ extensions, BridgeClass, headless, waitForInit }`. Returns `{ driver, testBridge, profilePath }` |
+| `launchBrowser(options?)` | Launches Firefox with the bridge extension installed. Options: `{ extensions, BridgeClass, headless, waitForInit, preferences }`. Returns `{ driver, testBridge, profilePath }` |
 | `cleanupBrowser(browser)` | Quits the browser and removes its temporary profile |
 | `extensionDir` | Path to the bridge extension directory (for manual setup with `driver.installAddon()`) |
 | `sleep(ms)` | Promise-based delay |

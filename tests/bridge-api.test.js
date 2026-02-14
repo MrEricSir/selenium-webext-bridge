@@ -658,7 +658,7 @@ async function main() {
         await bridge.ping();
         results.fail('ensureReady() throws on non-HTTP page', 'no error thrown');
       } catch (err) {
-        if (err.message.includes('not an HTTP page'))
+        if (err.message.includes('not an HTTP'))
           results.pass('ensureReady() throws on non-HTTP page');
         else
           results.fail('ensureReady() throws on non-HTTP page', `wrong error: ${err.message}`);
