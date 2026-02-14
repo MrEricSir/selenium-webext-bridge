@@ -130,6 +130,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `init()` | Navigates to a page and waits for the bridge content script to inject |
 | `ping()` | Verifies the bridge is working (returns `"pong"`) |
 | `captureScreenshot(format?)` | Screenshots the active tab (returns `data:image/png;...`) |
+| `getExtensionUrl(extensionId)` | Returns the `moz-extension://` URL for an installed extension by its ID (the `id` field from the extension's `manifest.json`). |
 
 #### Extension Forwarding
 | Method | Description |

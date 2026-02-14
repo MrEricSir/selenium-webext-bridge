@@ -618,6 +618,63 @@ async function main() {
         results.fail('sendToExtension() returns error for unknown action', `got: ${JSON.stringify(resp)}`);
     } catch (e) { results.error('sendToExtension() returns error for unknown action', e); }
 
+    // =============================================================
+    // EXTENSION URL + CONTEXT DETECTION
+    // =============================================================
+    console.log('\n--- Extension URL + Context Detection ---');
+
+    // Returns moz-extension:// URL if the extension is found.
+    try {
+      const url = await bridge.getExtensionUrl(HELLO_EXT_ID);
+      if (typeof url === 'string' && url.startsWith('moz-extension://'))
+        results.pass('getExtensionUrl() returns moz-extension:// URL');
+      else
+        results.fail('getExtensionUrl() returns moz-extension:// URL', `got: ${url}`);
+    } catch (e) { results.error('getExtensionUrl() returns moz-extension:// URL', e); }
+
+    // Returns null if not found (for example, not installed)
+    try {
+      const url = await bridge.getExtensionUrl('nonexistent@example.com');
+      if (url === null)
+        results.pass('getExtensionUrl() returns null for unknown extension');
+      else
+        results.fail('getExtensionUrl() returns null for unknown extension', `got: ${url}`);
+    } catch (e) { results.error('getExtensionUrl() returns null for unknown extension', e); }
+
+    // After getExtensionUrl(), bridge auto-recovers on next call
+    try {
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('Bridge auto-recovers after getExtensionUrl()');
+      else
+        results.fail('Bridge auto-recovers after getExtensionUrl()', `got: ${pong}`);
+    } catch (e) { results.error('Bridge auto-recovers after getExtensionUrl()', e); }
+
+    // ensureReady() throws when on a non-HTTP page
+    try {
+      await browser.driver.get('about:blank');
+      await sleep(500);
+      try {
+        await bridge.ping();
+        results.fail('ensureReady() throws on non-HTTP page', 'no error thrown');
+      } catch (err) {
+        if (err.message.includes('not an HTTP page'))
+          results.pass('ensureReady() throws on non-HTTP page');
+        else
+          results.fail('ensureReady() throws on non-HTTP page', `wrong error: ${err.message}`);
+      }
+    } catch (e) { results.error('ensureReady() throws on non-HTTP page', e); }
+
+    // After the error, bridge.init() + ping() recovers
+    try {
+      await bridge.init();
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('Bridge recovers after init() following non-HTTP error');
+      else
+        results.fail('Bridge recovers after init() following non-HTTP error', `got: ${pong}`);
+    } catch (e) { results.error('Bridge recovers after init() following non-HTTP error', e); }
+
   } catch (e) {
     results.error('Test Suite', e);
   } finally {
