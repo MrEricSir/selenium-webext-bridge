@@ -1,6 +1,7 @@
 const { TestBridge } = require('./lib/test-bridge');
 const { sleep, generateTestUrl, waitForCondition, TabUtils, Assert, TestResults, launchBrowser, cleanupBrowser, extensionDir } = require('./lib/test-helpers');
 const { createTestServer } = require('./lib/test-http-server');
+const { Command } = require('selenium-webdriver/lib/command');
 
 module.exports = {
   TestBridge,
@@ -13,5 +14,6 @@ module.exports = {
   createTestServer,
   launchBrowser,
   cleanupBrowser,
-  extensionDir
+  extensionDir,
+  Command
 };

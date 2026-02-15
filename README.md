@@ -209,6 +209,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `TabUtils` | Helper class for opening/closing/switching tabs via Selenium |
 | `Assert` | Simple assertion utilities (`equal`, `greaterThan`, `includes`, `isTrue`, ...) |
 | `TestResults` | Tracks test results with `pass()`, `fail()`, `error()`, `summary()` |
+| `Command` | Makes the Command class from `selenium-webdriver` easily available |
 
 ### Creating a TestBridge Subclass
 
