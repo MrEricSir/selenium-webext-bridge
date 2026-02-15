@@ -15,6 +15,7 @@ const { launchBrowser, cleanupBrowser, createTestServer } = require('../../');
 
 const HELLO_EXT_DIR = path.join(__dirname, 'extension');
 const HELLO_EXT_ID = 'hello-world@example.local';
+const HELLO_EXT_NAME = 'Hello World Extension';
 
 async function main() {
   console.log('=== selenium-webext-bridge: Hello World Example ===\n');
@@ -51,6 +52,18 @@ async function main() {
     await bridge.sendToExtension(HELLO_EXT_ID, { action: 'increment' });
     result = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'getCounter' });
     console.log('after 2x →', result.data);
+
+    // Look up the extension's internal URL by ID and by name
+    const urlById = await bridge.getExtensionUrl(HELLO_EXT_ID);
+    console.log('url (id) →', urlById);
+
+    const urlByName = await bridge.getExtensionUrlByName(HELLO_EXT_NAME);
+    console.log('url (name)→', urlByName);
+
+    if (urlById !== urlByName) {
+      throw new Error(`URL mismatch: getExtensionUrl returned "${urlById}" but getExtensionUrlByName returned "${urlByName}"`);
+    }
+    console.log('match    → both methods return the same URL');
 
     // Also demo the built-in tab APIs
     const tabs = await bridge.getTabs();

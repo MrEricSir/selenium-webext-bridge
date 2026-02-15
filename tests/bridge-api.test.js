@@ -650,6 +650,33 @@ async function main() {
         results.fail('Bridge auto-recovers after getExtensionUrl()', `got: ${pong}`);
     } catch (e) { results.error('Bridge auto-recovers after getExtensionUrl()', e); }
 
+    // getExtensionUrlByName() returns moz-extension:// URL
+    try {
+      const url = await bridge.getExtensionUrlByName('Hello World Extension');
+      if (typeof url === 'string' && url.startsWith('moz-extension://'))
+        results.pass('getExtensionUrlByName() returns moz-extension:// URL');
+      else
+        results.fail('getExtensionUrlByName() returns moz-extension:// URL', `got: ${url}`);
+    } catch (e) { results.error('getExtensionUrlByName() returns moz-extension:// URL', e); }
+
+    // getExtensionUrlByName() returns null for unknown name
+    try {
+      const url = await bridge.getExtensionUrlByName('Nonexistent Extension');
+      if (url === null)
+        results.pass('getExtensionUrlByName() returns null for unknown name');
+      else
+        results.fail('getExtensionUrlByName() returns null for unknown name', `got: ${url}`);
+    } catch (e) { results.error('getExtensionUrlByName() returns null for unknown name', e); }
+
+    // After getExtensionUrlByName(), bridge auto-recovers on next call
+    try {
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('Bridge auto-recovers after getExtensionUrlByName()');
+      else
+        results.fail('Bridge auto-recovers after getExtensionUrlByName()', `got: ${pong}`);
+    } catch (e) { results.error('Bridge auto-recovers after getExtensionUrlByName()', e); }
+
     // ensureReady() throws when on a non-HTTP page
     try {
       await browser.driver.get('about:blank');

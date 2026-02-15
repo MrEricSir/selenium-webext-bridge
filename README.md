@@ -131,6 +131,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `ping()` | Verifies the bridge is working (returns `"pong"`) |
 | `captureScreenshot(format?)` | Screenshots the active tab (returns `data:image/png;...`) |
 | `getExtensionUrl(extensionId)` | Returns the `moz-extension://` URL for an installed extension by its ID (the `id` field from the extension's `manifest.json`). |
+| `getExtensionUrlByName(name)` | Returns the `moz-extension://` URL for an installed extension by its `name` field from `manifest.json`. Useful for extensions without a fixed ID. |
 
 #### Extension Forwarding
 | Method | Description |
