@@ -13,7 +13,8 @@
 
 const path = require('path');
 const {
-  sleep, waitForCondition, createTestServer, TestResults, generateTestUrl, launchBrowser, cleanupBrowser
+  sleep, waitForCondition, createTestServer, TestResults, generateTestUrl,
+  launchBrowser, cleanupBrowser
 } = require('../');
 
 const HELLO_EXT_DIR = path.join(__dirname, '..', 'examples', 'hello-world', 'extension');
@@ -33,7 +34,8 @@ async function main() {
     console.log('Setting up Firefox...');
     browser = await launchBrowser({
       extensions: [HELLO_EXT_DIR],
-      waitForInit: 2000
+      waitForInit: 2000,
+      firefoxArgs: ['-remote-allow-system-access']
     });
     const bridge = browser.testBridge;
 
@@ -701,6 +703,134 @@ async function main() {
       else
         results.fail('Bridge recovers after init() following non-HTTP error', `got: ${pong}`);
     } catch (e) { results.error('Bridge recovers after init() following non-HTTP error', e); }
+
+    // =============================================================
+    // BRIDGE RESET
+    // =============================================================
+    console.log('\n--- Bridge Reset ---');
+
+    // reset() recovers after navigating to extension page
+    try {
+      const extUrl = await bridge.getExtensionUrl(HELLO_EXT_ID);
+      await browser.driver.get(extUrl + '/manifest.json');
+      await sleep(500);
+
+      await bridge.reset();
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('reset() recovers after extension page');
+      else
+        results.fail('reset() recovers after extension page', `got: ${pong}`);
+    } catch (e) { results.error('reset() recovers after extension page', e); }
+
+    // reset() recovers after about:blank
+    try {
+      await browser.driver.get('about:blank');
+      await sleep(500);
+
+      await bridge.reset();
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('reset() recovers after about:blank');
+      else
+        results.fail('reset() recovers after about:blank', `got: ${pong}`);
+    } catch (e) { results.error('reset() recovers after about:blank', e); }
+
+    // reset() is a no-op when already on an HTTP page
+    try {
+      const tabsBefore = await bridge.getTabs();
+      await bridge.reset();
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('reset() works when already on HTTP page');
+      else
+        results.fail('reset() works when already on HTTP page', `got: ${pong}`);
+    } catch (e) { results.error('reset() works when already on HTTP page', e); }
+
+    // =============================================================
+    // WAIT FOR TAB LOAD
+    // =============================================================
+    console.log('\n--- Wait For Tab Load ---');
+
+    // waitForTabLoad() returns loaded tab
+    try {
+      const tab = await bridge.createTab('http://127.0.0.1:8080/load-wait-test');
+      const loaded = await bridge.waitForTabLoad(tab.id, 10000);
+      if (loaded && loaded.status === 'complete' && loaded.id === tab.id)
+        results.pass('waitForTabLoad() returns tab when loaded');
+      else
+        results.fail('waitForTabLoad() returns tab when loaded', `got: ${JSON.stringify(loaded)}`);
+      await bridge.closeTab(tab.id);
+      await sleep(300);
+    } catch (e) { results.error('waitForTabLoad() returns tab when loaded', e); }
+
+    // waitForTabLoad() returns null on timeout for nonexistent tab
+    try {
+      const result = await bridge.waitForTabLoad(999999, 1000);
+      if (result === null)
+        results.pass('waitForTabLoad() returns null on timeout');
+      else
+        results.fail('waitForTabLoad() returns null on timeout', `got: ${JSON.stringify(result)}`);
+    } catch (e) { results.error('waitForTabLoad() returns null on timeout', e); }
+
+    // waitForTabLoad() can replace sleep() after createTab()
+    try {
+      const tab = await bridge.createTab('http://127.0.0.1:8080/no-sleep-needed');
+      const loaded = await bridge.waitForTabLoad(tab.id);
+      const title = await bridge.executeInTab(loaded.id, 'document.readyState');
+      if (title === 'complete')
+        results.pass('waitForTabLoad() + executeInTab() works without sleep()');
+      else
+        results.fail('waitForTabLoad() + executeInTab() works without sleep()', `readyState: ${title}`);
+      await bridge.closeTab(tab.id);
+      await sleep(300);
+    } catch (e) { results.error('waitForTabLoad() + executeInTab() works without sleep()', e); }
+
+    // =============================================================
+    // CLICK BROWSER ACTION
+    // =============================================================
+    console.log('\n--- Click Browser Action ---');
+
+    // clickBrowserAction() triggers the hello-world extension's action
+    try {
+      // The hello-world extension increments a counter on action click.
+      const before = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'getCounter' });
+      const counterBefore = before.data;
+
+      await bridge.clickBrowserAction(HELLO_EXT_ID);
+      await sleep(500);
+      await bridge.reset();
+
+      const after = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'getCounter' });
+      if (after.data === counterBefore + 1)
+        results.pass('clickBrowserAction() triggers extension action');
+      else
+        results.fail('clickBrowserAction() triggers extension action',
+          `counter before: ${counterBefore}, after: ${after.data}`);
+    } catch (e) { results.error('clickBrowserAction() triggers extension action', e); }
+
+    // clickBrowserAction() throws for nonexistent extension
+    try {
+      try {
+        await bridge.clickBrowserAction('nonexistent@example.com');
+        results.fail('clickBrowserAction() throws for nonexistent extension', 'no error thrown');
+      } catch (err) {
+        if (err.message.includes('not found'))
+          results.pass('clickBrowserAction() throws for nonexistent extension');
+        else
+          results.fail('clickBrowserAction() throws for nonexistent extension', `wrong error: ${err.message}`);
+      }
+    } catch (e) { results.error('clickBrowserAction() throws for nonexistent extension', e); }
+
+    // Bridge recovers after clickBrowserAction()
+    try {
+      await bridge.reset();
+      const pong = await bridge.ping();
+      if (pong === 'pong')
+        results.pass('Bridge recovers after clickBrowserAction()');
+      else
+        results.fail('Bridge recovers after clickBrowserAction()', `got: ${pong}`);
+    } catch (e) { results.error('Bridge recovers after clickBrowserAction()', e); }
 
   } catch (e) {
     results.error('Test Suite', e);

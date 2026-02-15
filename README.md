@@ -129,9 +129,11 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `new TestBridge(driver)` | Creates a test bridge instance |
 | `init()` | Navigates to a page and waits for the bridge content script to inject |
 | `ping()` | Verifies the bridge is working (returns `"pong"`) |
+| `reset()` | Resets the bridge by navigating to an HTTP page and re-initializing. Use after visiting extension or `about:` pages. |
 | `captureScreenshot(format?)` | Screenshots the active tab (returns `data:image/png;...`) |
 | `getExtensionUrl(extensionId)` | Returns the `moz-extension://` URL for an installed extension by its ID (the `id` field from the extension's `manifest.json`). |
 | `getExtensionUrlByName(name)` | Returns the `moz-extension://` URL for an installed extension by its `name` field from `manifest.json`. Useful for extensions without a fixed ID. |
+| `clickBrowserAction(extensionId)` | Clicks an extension's toolbar button. Requires `launchBrowser({ firefoxArgs: ['-remote-allow-system-access'] })`. |
 
 #### Extension Forwarding
 | Method | Description |
@@ -175,6 +177,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `waitForTabCount(n, timeout?)` | Waits until the browser has exactly `n` tabs |
 | `waitForTabUrl(pattern, timeout?)` | Waits for any tab URL to contain `pattern` (returns the tab, or `null` on timeout) |
 | `waitForTabEvent(eventType, timeout?)` | Waits for a specific tab event type (e.g. `'created'`, `'removed'`). Returns the event, or `null` on timeout. |
+| `waitForTabLoad(tabId, timeout?)` | Waits for a tab to finish loading and returns the loaded tab, or `null` on timeout. |
 
 
 #### Window Management
@@ -196,7 +199,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 
 | Export | Description |
 |:-------|:------------|
-| `launchBrowser(options?)` | Launches Firefox with the bridge extension installed. Options: `{ extensions, BridgeClass, headless, waitForInit, preferences }`. Returns `{ driver, testBridge, profilePath }` |
+| `launchBrowser(options?)` | Launches Firefox with the bridge extension installed. Options: `{ extensions, BridgeClass, headless, waitForInit, preferences, firefoxArgs }`. Returns `{ driver, testBridge, profilePath }` |
 | `cleanupBrowser(browser)` | Quits the browser and removes its temporary profile |
 | `extensionDir` | Path to the bridge extension directory (for manual setup with `driver.installAddon()`) |
 | `sleep(ms)` | Promise-based delay |

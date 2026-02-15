@@ -10,6 +10,10 @@
     }
   },
 
+  "browser_action": {
+    "default_title": "Hello World"
+  },
+
   "background": {
     "scripts": ["background.js"]
   }
