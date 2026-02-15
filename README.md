@@ -10,11 +10,19 @@ This test bridge runs alongside your Firefox extension, allowing Selenium tests 
 ## Install
 
 ```bash
-# Install requirements.
-npm install selenium-webdriver geckodriver
+npm install selenium-webext-bridge selenium-webdriver geckodriver
+```
 
-# Install this extension.
-npm install selenium-webext-bridge
+**Note:** You will need [Firefox](https://www.mozilla.org/firefox/) installed.
+
+
+### Install From Source
+
+```bash
+git clone https://github.com/MrEricSir/selenium-webext-bridge.git
+cd selenium-webext-bridge
+npm install
+npm install selenium-webdriver geckodriver
 ```
 
 ## Getting Started
