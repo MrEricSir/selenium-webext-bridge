@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- **closeOtherTabsAndWindows():** Closes all tabs and windows except the current one
+- **getExtensionUrlForUuid():** Returns the `moz-extension://` for an installed UUID
+- **Command:** Re-exported for convenience
+- FIX: Removed the unnecessary sleep in `init()`
+- FIX: Clarify timeout message in `init()`
+
 ## 0.1.0
 
 Initial beta release.
