@@ -213,6 +213,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `extensionDir` | Path to the bridge extension directory (for manual setup with `driver.installAddon()`) |
 | `sleep(ms)` | Promise-based delay |
 | `waitForCondition(conditionFn, timeout?, interval?)` | Calls `conditionFn` until it returns a truthy value |
+} `getExtensionUrlForUuid(uuid)` | Generates `moz-extension://` URL for an installed UUID |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
 | `createTestServer({ port?, host? })` | Starts the local test bridge server |
 | `TabUtils` | Helper class for opening/closing/switching tabs via Selenium |
