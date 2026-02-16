@@ -118,15 +118,15 @@ async function main() {
       await bridge.createTab('http://127.0.0.1:8080/other2');
       await sleep(500);
       const tabsBefore = await bridge.getTabs();
-      await bridge.closeOtherTabs();
+      await bridge.closeOtherTabsAndWindows();
       await sleep(500);
       const tabsAfter = await bridge.getTabs();
       if (tabsAfter.length === 1 && tabsBefore.length === 3)
-        results.pass('closeOtherTabs() closes all tabs except current');
+        results.pass('closeOtherTabsAndWindows() closes all tabs except current');
       else
-        results.fail('closeOtherTabs() closes all tabs except current',
+        results.fail('closeOtherTabsAndWindows() closes all tabs except current',
           `before: ${tabsBefore.length}, after: ${tabsAfter.length}`);
-    } catch (e) { results.error('closeOtherTabs() closes all tabs except current', e); }
+    } catch (e) { results.error('closeOtherTabsAndWindows() closes all tabs except current', e); }
 
     // =============================================================
     // TAB STATE: pinTab, unpinTab, moveTab, muteTab, unmuteTab
