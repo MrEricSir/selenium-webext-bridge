@@ -161,6 +161,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 |:-------|:------------|
 | `createTab(url, active?)` | Opens a new tab (without switching Selenium focus) |
 | `closeTab(tabId)` | Closes a tab by ID |
+| `closeOtherTabs()` | Closes all tabs except the focused one |
 | `updateTab(tabId, { url?, active?, muted?, pinned? })` | Updates properties of a tab |
 | `reloadTab(tabId)` | Reloads a tab |
 

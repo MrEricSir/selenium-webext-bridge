@@ -112,6 +112,22 @@ async function main() {
         results.fail('closeTab() removes the tab', `before: ${tabsBefore.length}, after: ${tabsAfter.length}`);
     } catch (e) { results.error('closeTab() removes the tab', e); }
 
+    // closeOtherTabs
+    try {
+      await bridge.createTab('http://127.0.0.1:8080/other1');
+      await bridge.createTab('http://127.0.0.1:8080/other2');
+      await sleep(500);
+      const tabsBefore = await bridge.getTabs();
+      await bridge.closeOtherTabs();
+      await sleep(500);
+      const tabsAfter = await bridge.getTabs();
+      if (tabsAfter.length === 1 && tabsBefore.length === 3)
+        results.pass('closeOtherTabs() closes all tabs except current');
+      else
+        results.fail('closeOtherTabs() closes all tabs except current',
+          `before: ${tabsBefore.length}, after: ${tabsAfter.length}`);
+    } catch (e) { results.error('closeOtherTabs() closes all tabs except current', e); }
+
     // =============================================================
     // TAB STATE: pinTab, unpinTab, moveTab, muteTab, unmuteTab
     // =============================================================
