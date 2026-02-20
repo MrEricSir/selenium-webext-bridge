@@ -142,6 +142,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `getExtensionUrl(extensionId)` | Returns the `moz-extension://` URL for an installed extension by its ID (the `id` field from the extension's `manifest.json`). |
 | `getExtensionUrlByName(name)` | Returns the `moz-extension://` URL for an installed extension by its `name` field from `manifest.json`. Useful for extensions without a fixed ID. |
 | `clickBrowserAction(extensionId)` | Clicks an extension's toolbar button. Requires `launchBrowser({ firefoxArgs: ['-remote-allow-system-access'] })`. |
+| `clickPageAction(extensionId)` | Clicks an extension's page action button in the URL bar. Only succeeds when the page action is visible for the current tab. Requires `launchBrowser({ firefoxArgs: ['-remote-allow-system-access'] })`. |
 
 #### Extension Forwarding
 | Method | Description |
@@ -213,7 +214,7 @@ It's up to you what to implement in your listener. Some possibilities include re
 | `extensionDir` | Path to the bridge extension directory (for manual setup with `driver.installAddon()`) |
 | `sleep(ms)` | Promise-based delay |
 | `waitForCondition(conditionFn, timeout?, interval?)` | Calls `conditionFn` until it returns a truthy value |
-} `getExtensionUrlForUuid(uuid)` | Generates `moz-extension://` URL for an installed UUID |
+| `getExtensionUrlForUuid(uuid)` | Generates `moz-extension://` URL for an installed UUID |
 | `generateTestUrl(name?, port?)` | Generates `http://127.0.0.1:<port>/<name>-<timestamp>` URLs on the test bridge server |
 | `createTestServer({ port?, host? })` | Starts the local test bridge server |
 | `TabUtils` | Helper class for opening/closing/switching tabs via Selenium |
@@ -253,16 +254,43 @@ const bridge = browser.testBridge; // instanceof MyExtBridge
 const state = await bridge.getState();
 ```
 
-## Examples
+## Examples and Tests
 
-See [`examples/hello-world/`](examples/hello-world/) for a complete minimal example of a Firefox extension with a Selenium integration test.
+The [`examples`](examples/) directory contains two minimal Firefox extensions used for testing and as reference implementations. For detailed usage see the [`tests`](tests/) directory. 
+
+- [`examples/hello-world/`](examples/hello-world/) is a browser action extension that responds to `onMessageExternal` messages. Includes a standalone test script (`test.js`)
+
+- [`examples/page-action/`](examples/page-action/) is an extension that shows a "page action" button in the URL bar on web pages. Used by the test suite to verify `clickPageAction()`
+
+- The full test suite in [`tests/bridge-api.test.js`](tests/bridge-api.test.js) exercises every bridge API method using both extensions and serves as usage documentation.
+
+### Running the Tests
+
+First, install the dependencies:
+
+```bash
+npm install
+npm install selenium-webdriver geckodriver
+```
+
+Try running the `hello-world` tests:
 
 ```bash
 cd examples/hello-world
 node test.js
 ```
 
-There is a full test suite in [`tests/bridge-api.test.js`](tests/bridge-api.test.js) that makes use of every method. This can provide helpful examples for your own extension tests.
+From the project root folder, run the full test suite:
+
+```bash
+npm test
+```
+
+Alternatively, run the tests in headless mode (without a browser window), which is useful for executing the scripts in CI/CD environments like GitHub Actions or Jenkins:
+
+```bash
+HEADLESS=1 npm test
+```
 
 ## Under The Hood
 

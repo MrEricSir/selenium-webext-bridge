@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Page Action Test Extension",
+  "version": "1.0.0",
+  "description": "Minimal extension for testing clickPageAction()",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "page-action-test@example.local"
+    }
+  },
+
+  "permissions": ["<all_urls>"],
+
+  "page_action": {
+    "default_title": "Page Action Test"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }]
+}

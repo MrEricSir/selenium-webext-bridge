@@ -18,58 +18,68 @@ const HELLO_EXT_ID = 'hello-world@example.local';
 const HELLO_EXT_NAME = 'Hello World Extension';
 
 async function main() {
-  console.log('=== selenium-webext-bridge: Hello World Example ===\n');
+  console.log();
+  console.log('selenium-webext-bridge Hello World Example');
+  console.log('================================================================');
+  console.log();
 
-  // 1. Start local HTTP server (bridge needs an http page to inject into)
+  // First, start local HTTP server (bridge needs an http page to inject into)
   const server = await createTestServer({ port: 8080 });
   let browser;
 
   try {
-    // 2. Launch Firefox with the bridge and our extension installed
+    // Second, launch Firefox with the bridge and our extension installed
     console.log('Launching Firefox...');
     browser = await launchBrowser({
       extensions: [HELLO_EXT_DIR]
     });
     const bridge = browser.testBridge;
-    console.log('Bridge ready!\n');
-
-    // 3. Talk to the extension via the bridge
     let result;
+
+    console.log();
+    console.log('----- Basic Functionality -----');
 
     // Ping
     result = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'ping' });
-    console.log('ping     →', result.data);
+    console.log('ping:', result.data);
 
     // Greet
     result = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'greet', name: 'World' });
-    console.log('greet    →', result.data);
+    console.log('greet:', result.data);
 
     // Counter
     result = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'getCounter' });
-    console.log('counter  →', result.data);
+    console.log('counter:', result.data);
 
     await bridge.sendToExtension(HELLO_EXT_ID, { action: 'increment' });
     await bridge.sendToExtension(HELLO_EXT_ID, { action: 'increment' });
     result = await bridge.sendToExtension(HELLO_EXT_ID, { action: 'getCounter' });
-    console.log('after 2x →', result.data);
+    console.log('after 2x:', result.data);
+
+    console.log();
+    console.log('----- Find Extension URL -----');
 
     // Look up the extension's internal URL by ID and by name
     const urlById = await bridge.getExtensionUrl(HELLO_EXT_ID);
-    console.log('url (id) →', urlById);
+    console.log('url (id):', urlById);
 
     const urlByName = await bridge.getExtensionUrlByName(HELLO_EXT_NAME);
-    console.log('url (name)→', urlByName);
+    console.log('url (name):', urlByName);
 
     if (urlById !== urlByName) {
       throw new Error(`URL mismatch: getExtensionUrl returned "${urlById}" but getExtensionUrlByName returned "${urlByName}"`);
     }
-    console.log('match    → both methods return the same URL');
+    console.log('match: both methods return the same URL');
+
+    console.log();
+    console.log('----- Tab API -----');
 
     // Also demo the built-in tab APIs
     const tabs = await bridge.getTabs();
-    console.log('tabs     →', tabs.length, 'open');
+    console.log('tabs:', tabs.length, 'open');
 
-    console.log('\nAll checks passed!');
+    console.log();
+    console.log('All checks passed!');
 
   } finally {
     await cleanupBrowser(browser);

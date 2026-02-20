@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- **clickPageAction():** Clicks a page action icon in the URL bar
+- Improved test examples
+- Documentation cleanup
+
 ## 0.2.0
 
 - **closeOtherTabsAndWindows():** Closes all tabs and windows except the current one
