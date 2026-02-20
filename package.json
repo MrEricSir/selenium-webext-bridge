@@ -1,6 +1,6 @@
 {
   "name": "selenium-webext-bridge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Selenium/Firefox WebExtension test bridge - control and query any Firefox extension from Selenium tests",
   "main": "index.js",
   "scripts": {
